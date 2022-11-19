@@ -22,6 +22,7 @@ func NewServer(config *config.Config) *Server {
 
 func (s *Server) ListenAndServe() {
 
+	MakeFile()
 	s.registerHandler()
 	s.startServer()
 }
