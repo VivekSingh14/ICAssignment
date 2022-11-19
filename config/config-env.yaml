@@ -6,5 +6,5 @@ server:
   WriteTimeout: 5
   SSL: false
   CtxDefaultTimeout: 12
-  AppVersion: 08.22.00
+  AppVersion: 11.19.22
   Debug: false
