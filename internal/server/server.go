@@ -8,7 +8,6 @@ import (
 	"github.com/shortUrl/ICAssignment/config"
 )
 
-//adding comment
 type Server struct {
 	config *config.Config
 	router *mux.Router
