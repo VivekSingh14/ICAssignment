@@ -24,25 +24,6 @@ func (s *UrlService) CreateShortUrl(w http.ResponseWriter, r *http.Request) {
 	// if no then it will insert otherwise return generic msg that it is already created or return result which is already there.
 	vars := mux.Vars(r)
 
-	fmt.Println(vars["url"])
-
-	//creating short url with md5 crypto method and putting into a map
-	temp := MakeShortUrl(vars["url"])
-
-	fmt.Println(temp)
-
-	// converting it into []bytes
-	test, err := json.Marshal(temp)
-	if err != nil {
-		return
-	}
-	//putting it into text file
-	err = ioutil.WriteFile("data.txt", test, 0)
-
-	if err != nil {
-		log.Fatal(err)
-	}
-
 	//reading the content from file.
 	content, err := ioutil.ReadFile("data.txt")
 
@@ -56,7 +37,33 @@ func (s *UrlService) CreateShortUrl(w http.ResponseWriter, r *http.Request) {
 		log.Fatal(err)
 	}
 
-	fmt.Println(m)
+	var data map[string]string
+
+	hashedValue := IfPresent(m, vars["url"])
+
+	if hashedValue == "" {
+		//creating short url with md5 crypto method and putting into a map
+		data = MakeShortUrl(vars["url"])
+	} else {
+		fmt.Println("fetched from file: ", hashedValue)
+		w.WriteHeader(http.StatusOK)
+		fmt.Fprintf(w, "ShortUrl is created.")
+
+	}
+
+	// converting it into []bytes
+	convertedData, err := json.Marshal(data)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Println("new created: ", data[vars["url"]])
+	//putting it into text file
+	err = ioutil.WriteFile("data.txt", convertedData, 0)
+
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	w.WriteHeader(http.StatusOK)
 	fmt.Fprintf(w, "ShortUrl is created.")
@@ -90,4 +97,14 @@ func GetBytes(key interface{}) ([]byte, error) {
 		return nil, err
 	}
 	return buf.Bytes(), nil
+}
+
+func IfPresent(m map[string]string, url string) string {
+
+	for key, element := range m {
+		if key == url {
+			return element
+		}
+	}
+	return ""
 }
