@@ -19,5 +19,5 @@ func RegisterHandlers(router *mux.Router, config *config.Config) {
 func urlShortEndpoints(urlShortRouter *mux.Router, service *UrlService) {
 	urlShortRouter.HandleFunc("/health", service.HealthCheck).Methods(http.MethodGet)
 	urlShortRouter.HandleFunc("/create/{url}", service.CreateShortUrl).Methods(http.MethodGet)
-	urlShortRouter.HandleFunc("/fetch", service.FetchShortUrl).Methods(http.MethodPost)
+
 }

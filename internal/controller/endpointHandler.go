@@ -7,9 +7,11 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
+	"io/fs"
 	"io/ioutil"
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/gorilla/mux"
 )
@@ -31,25 +33,36 @@ func (s *UrlService) CreateShortUrl(w http.ResponseWriter, r *http.Request) {
 		log.Fatal(err)
 	}
 
+	var fi fs.FileInfo
+	fi, err = os.Stat("data.txt")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Println("file size: ", fi.Size())
+
 	m := make(map[string]string)
 	err = json.Unmarshal(content, &m)
 	if err != nil {
-		log.Fatal(err)
+		log.Print(err)
 	}
 
 	var data map[string]string
 
 	hashedValue := IfPresent(m, vars["url"])
 
-	if hashedValue == "" {
-		//creating short url with md5 crypto method and putting into a map
-		data = MakeShortUrl(vars["url"])
-	} else {
+	if hashedValue != "" {
 		fmt.Println("fetched from file: ", hashedValue)
-		w.WriteHeader(http.StatusOK)
-		fmt.Fprintf(w, "ShortUrl is created.")
 
+		temp := "bit.ly/" + hashedValue
+		w.WriteHeader(http.StatusOK)
+		w.Write([]byte(temp))
+		//fmt.Fprintf(w, "ShortUrl is fetched.")
+		return
 	}
+
+	//creating short url with md5 crypto method and putting into a map
+	data = MakeShortUrl(vars["url"])
 
 	// converting it into []bytes
 	convertedData, err := json.Marshal(data)
@@ -65,14 +78,11 @@ func (s *UrlService) CreateShortUrl(w http.ResponseWriter, r *http.Request) {
 		log.Fatal(err)
 	}
 
+	temp := "bit.ly/" + data[vars["url"]]
 	w.WriteHeader(http.StatusOK)
-	fmt.Fprintf(w, "ShortUrl is created.")
+	w.Write([]byte(temp))
+	//fmt.Fprintf(w, "ShortUrl is created.")
 
-}
-
-func (s *UrlService) FetchShortUrl(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(http.StatusOK)
-	fmt.Fprintf(w, "ShortUrl is fetched.")
 }
 
 func HashedCodeGenerator(str string) string {
