@@ -1,7 +1,7 @@
 # ICAssignment
 Short Url builder
 
-# How to run it on local: use the following and hit given url on browser or on postman because Mathod type is GET only 
+# How to run it on local: use the following steps and hit the given url on browser or on postman because Method type is GET only 
 go run -tags dynamic cmd/main.go
 
 
