@@ -16,7 +16,7 @@ Method: GET
         #docker pull vivek1411/shorturl-latest
 
 2. run the container using below command
-      #docker run -d -p 8080:8080 --name <name> vivek1411/shorturl-latest
+      #docker run -d -p 8080:8080 --name #anyname vivek1411/shorturl-latest
 
 3. hit it using curl or browser or postman.
 
